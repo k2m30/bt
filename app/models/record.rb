@@ -1,4 +1,5 @@
 require 'csv'
+require 'ipaddr'
 
 class Record < ActiveRecord::Base
   def self.import(folder='./HDR/ac-1400_192.168.10.38_192.168.10.36_000000001_20150709150750_HDR_V8.csv')
@@ -40,7 +41,23 @@ class Record < ActiveRecord::Base
     end
   end
 
-  def self.search(query)
-    Record.all
+  def self.search(params)
+    records = Record.all
+
+    sym = params[:client_ip]
+    records = Record.where(client_ip: IPAddr.new(sym).ipv4_mapped.to_i) if sym.present?
+
+    sym = params[:client_port]
+    records = records.where(client_port: sym) if sym.present?
+
+    sym = params[:domain]
+    # records = records.where(domain: sym) if sym.present?
+    records = records.where('domain like ?', "%#{sym}%") if sym.present?
+
+    records
+  end
+
+  def ip_to_int(int)
+
   end
 end

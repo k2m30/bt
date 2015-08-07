@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  resources :records
-  root 'records#index'
+  root 'records#search'
 
   get 'import', to: 'records#import'
   get 'search', to: 'records#search'
