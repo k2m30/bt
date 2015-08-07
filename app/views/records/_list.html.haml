@@ -1,0 +1,43 @@
+=will_paginate @records
+
+%table.table.table-bordered.table-striped
+  %thead
+    %tr
+      %th Client IP:Port
+      %th Destination IP:Port
+      %th Domain
+      %th URI
+      %th Downloaded
+      %th Uploaded
+      %th Session start
+      %th Session end
+
+  %tbody
+    - @records.each do |r|
+      %tr
+        %td
+          = int_to_ip r.client_ip
+          %br
+          \:
+          = r.client_port
+        %td
+          = int_to_ip r.destination_ip
+          %br
+          \:
+          = r.destination_port
+        %td
+          = r.domain
+        %td
+          = link_to r.url, 'http://' +r.domain + r.url, target: :_blank
+        %td
+          = r.bytes_received
+        %td
+          = r.bytes_sent
+        %td
+          = r.session_start
+        %td
+          = r.session_end
+%br
+
+=will_paginate @records
+

@@ -1,0 +1,13 @@
+=form_tag(search_path, class: 'form-inline', method: :get) do
+  .form-group
+    =label_tag 'Client IP'
+    =text_field_tag :client_ip, nil, class: 'form-control'
+  .form-group
+    =label_tag 'Port'
+    =text_field_tag :client_port, nil, class: 'form-control'
+  .form-group
+    =label_tag 'Domain'
+    =text_field_tag :domain, nil, class: 'form-control'
+  =submit_tag 'Search', class: 'btn btn-default'
+
+=render 'list'
