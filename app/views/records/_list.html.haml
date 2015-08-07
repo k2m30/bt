@@ -17,9 +17,9 @@
       %tr
         %td
           = int_to_ip r.client_ip
-          (
-          = r.client_ip
-          )
+          -#(
+          -#= r.client_ip
+          -#)
           %br
           \:
           = r.client_port
