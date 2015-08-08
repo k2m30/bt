@@ -5,9 +5,56 @@
   .form-group
     =label_tag 'Port'
     =text_field_tag :client_port, params[:client_port], class: 'form-control'
+  %br
+  .form-group
+    =label_tag 'Destination IP'
+    =text_field_tag :destination_ip, params[:destination_ip], class: 'form-control'
+  .form-group
+    =label_tag 'Port'
+    =text_field_tag :destination_port, params[:destination_port], class: 'form-control'
+  %br
   .form-group
     =label_tag 'Domain'
     =text_field_tag :domain, params[:domain], class: 'form-control'
+  .form-group
+    =label_tag 'URI'
+    =text_field_tag :url, params[:url], class: 'form-control'
+
+  %br
+  .form-group
+    =label_tag 'Bytes received'
+    =label_tag 'from'
+    =text_field_tag :bytes_received_from, params[:bytes_received_from], class: 'form-control'
+    =label_tag 'to'
+    =text_field_tag :bytes_received_to, params[:bytes_received_to], class: 'form-control'
+
+  %br
+  .form-group
+    =label_tag 'Bytes sent'
+    =label_tag 'from'
+    =text_field_tag :bytes_sent_from, params[:bytes_sent_from], class: 'form-control'
+    =label_tag 'to'
+    =text_field_tag :bytes_sent_to, params[:bytes_sent_to], class: 'form-control'
+
+  %br
+  .form-group
+    =label_tag 'Session start'
+    =label_tag 'from'
+    =datetime_field_tag :session_start_from, params[:session_start_from], class: 'form-control'
+    =label_tag 'to'
+    =datetime_field_tag :session_start_to, params[:session_start_to], class: 'form-control'
+
+  %br
+  .form-group
+    =label_tag 'Session end'
+    =label_tag 'from'
+    =datetime_field_tag :session_end_from, params[:session_end_from], class: 'form-control'
+    =label_tag 'to'
+    =datetime_field_tag :session_end_to, params[:session_end_to], class: 'form-control'
+  = link_to 'Hide form', '#', id: 'hide'
+  %hr
   =submit_tag 'Search', class: 'btn btn-default'
 
+
+%br
 =render 'list'
