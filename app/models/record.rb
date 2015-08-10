@@ -1,5 +1,6 @@
 require 'csv'
 require 'ipaddr'
+require 'benchmark'
 
 class Record < ActiveRecord::Base
   def self.import(folder='HDR')
@@ -7,7 +8,7 @@ class Record < ActiveRecord::Base
     p t
     t_csv = 0
     t_save = 0
-    Dir["#{folder}/*"][0..99].each do |file|
+    Dir["#{folder}/*"][0..9].each do |file|
       csv = []
       CSV.foreach(file, headers: true) do |row|
         dt_csv = Time.now
@@ -45,6 +46,40 @@ class Record < ActiveRecord::Base
     p [t_csv, t_save]
   end
 
+  def self.direct_import(folder='HDR')
+    conn = ActiveRecord::Base.connection.raw_connection
+    time_to_transform = Benchmark.realtime do
+      str = nil
+      res = nil
+      file_f = nil
+      id = Record.count
+      begin
+        conn.copy_data "COPY records FROM STDIN CSV" do
+
+          Dir["#{folder}/*.csv"].reverse.each do |file|
+            file_f = file
+            p file
+            CSV.foreach(file, headers: true) do |row|
+              id+=1
+              row = row.to_h
+              str = "#{id},#{(IPAddr.new row['ClientIP']).to_i},#{row['ClientPort']},#{(IPAddr.new row['ServerIP']).to_i},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI']}\",#{row['RequestHeader.Host']}\n"
+              res = conn.put_copy_data "#{id},#{(IPAddr.new row['ClientIP']).to_i},#{row['ClientPort']},#{(IPAddr.new row['ServerIP']).to_i},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI']}\",\"#{row['RequestHeader.Host']}\"\n"
+            end
+          end
+        end
+      rescue => e
+        p ['-----']
+        p file_f
+        p res
+        p e.message
+        pp e.backtrace[0..4]
+      end
+
+    end
+    p time_to_transform
+
+  end
+
   def self.search(params)
     records = Record.all
 
@@ -68,7 +103,7 @@ class Record < ActiveRecord::Base
     records = records.where('session_start >= ?', sym.to_datetime) if sym.present?
 
     sym = params[:session_end]
-    records = records.where('session_end <=',{session_end: sym}) if sym.present?
+    records = records.where('session_end <=', {session_end: sym}) if sym.present?
 
     sym = params[:bytes_sent_from]
     records = records.where('bytes_sent >= ?', sym) if sym.present?

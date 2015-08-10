@@ -1,4 +1,4 @@
-=form_tag(search_path, class: 'form-inline', method: :get) do
+=form_tag(search_path, class: 'form-inline', id: 'search_form', method: :get) do
   .form-group
     =label_tag 'Client IP'
     =text_field_tag :client_ip, params[:client_ip], class: 'form-control'
