@@ -74,17 +74,27 @@ class Record < ActiveRecord::Base
       end
     end
     p time_to_transform
+    ActiveRecord::Base.connection.reconnect!
+    p Record.count
   end
 
   def self.worker(hashes)
     conn = PG.connect(dbname: 'beltelecom_development')
     conn.transaction do
-      conn.exec("COPY records FROM STDIN CSV")
+      conn.async_exec("COPY records FROM STDIN CSV")
       hashes.each do |row|
         conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
       end
+      conn.put_copy_end
     end
+
     conn.finish
+
+    # while conn.get_result
+    #   if conn.get_result.error_message
+    #     p conn.get_result.error_message
+    #   end
+    # end
   end
 
   def self.search(params)
