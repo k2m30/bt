@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20150807122725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "records", force: :cascade do |t|
+  create_table "records", id: false, force: :cascade do |t|
     t.inet     "client_ip"
     t.integer  "client_port"
     t.inet     "destination_ip"
@@ -30,5 +30,7 @@ ActiveRecord::Schema.define(version: 20150807122725) do
   end
 
   add_index "records", ["client_ip"], name: "index_records_on_client_ip", using: :btree
+  add_index "records", ["destination_ip"], name: "index_records_on_destination_ip", using: :btree
+  add_index "records", ["domain"], name: "index_records_on_domain", using: :btree
 
 end

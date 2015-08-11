@@ -47,32 +47,41 @@ class Record < ActiveRecord::Base
   end
 
   def self.direct_import(folder='HDR')
-    conn = ActiveRecord::Base.connection.raw_connection
-    time_to_transform = Benchmark.realtime do
-      id = Record.count
-      # begin
-      conn.copy_data "COPY records FROM STDIN CSV" do
-        Dir["#{folder}/*.csv"].each do |file|
-          CSV.foreach(file, headers: true) do |row|
-            id+=1
-            row = row.to_h
-            conn.put_copy_data "#{id},#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
+    thr = []
+    thr << Thread.new do
+      conn = ActiveRecord::Base.connection.raw_connection
+      time_to_transform = Benchmark.realtime do
+        # begin
+        conn.copy_data "COPY records FROM STDIN CSV" do
+          Dir["#{folder}/*.csv"].each do |file|
+            CSV.foreach(file, headers: true) do |row|
+              row = row.to_h
+              conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
+            end
           end
         end
       end
-      # rescue => e
-      #   # /nvidia_web_services/controller.gfeclientcontent.php/com.nvidia.services.GFEClientContent.getShieldReady/{"gcV":"2.4.5.28","dID":"0FD3","osC":"6.10","
-      #   p ['-----']
-      #   p file_f
-      #   p str
-      #   p res
-      #   p e.message
-      #   pp e.backtrace[0..4]
-      # end
+      p time_to_transform
+      end
 
-    end
-    p time_to_transform
+    # thr << Thread.new do
+    #   conn = ActiveRecord::Base.connection.raw_connection
+    #   time_to_transform = Benchmark.realtime do
+    #     # begin
+    #     conn.copy_data "COPY records FROM STDIN CSV" do
+    #       Dir["#{folder}/*.csv"].each do |file|
+    #         CSV.foreach(file, headers: true) do |row|
+    #           row = row.to_h
+    #           conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
+    #         end
+    #       end
+    #     end
+    #   end
+    #   p time_to_transform
+    #   end
 
+    thr.first.join
+    # thr.last.join
   end
 
   def self.search(params)

@@ -1,6 +1,6 @@
 class CreateRecords < ActiveRecord::Migration
   def change
-    create_table :records do |t|
+    create_table :records, id: false do |t|
 
       t.column :client_ip, :inet
       t.integer :client_port
@@ -19,5 +19,7 @@ class CreateRecords < ActiveRecord::Migration
 
     end
     add_index :records, :client_ip
+    add_index :records, :destination_ip
+    add_index :records, :domain
   end
 end
