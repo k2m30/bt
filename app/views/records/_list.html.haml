@@ -38,9 +38,9 @@
         %td
           = r.bytes_sent
         %td
-          = r.session_start
+          = r.session_start.to_formatted_s(:short)
         %td
-          = r.session_end
+          = r.session_end.to_formatted_s(:short)
 %br
 
 =will_paginate @records
