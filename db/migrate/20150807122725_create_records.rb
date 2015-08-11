@@ -2,10 +2,10 @@ class CreateRecords < ActiveRecord::Migration
   def change
     create_table :records do |t|
 
-      t.column :client_ip, :bigint
+      t.column :client_ip, :inet
       t.integer :client_port
 
-      t.column  :destination_ip, :bigint
+      t.column  :destination_ip, :inet
       t.integer :destination_port
 
       t.datetime :session_start

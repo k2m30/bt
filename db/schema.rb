@@ -17,9 +17,9 @@ ActiveRecord::Schema.define(version: 20150807122725) do
   enable_extension "plpgsql"
 
   create_table "records", force: :cascade do |t|
-    t.integer  "client_ip",        limit: 8
+    t.inet     "client_ip"
     t.integer  "client_port"
-    t.integer  "destination_ip",   limit: 8
+    t.inet     "destination_ip"
     t.integer  "destination_port"
     t.datetime "session_start"
     t.datetime "session_end"

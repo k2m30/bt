@@ -16,7 +16,7 @@
     - @records.each do |r|
       %tr
         %td
-          = int_to_ip r.client_ip
+          = r.client_ip
           -#(
           -#= r.client_ip
           -#)
@@ -24,14 +24,15 @@
           \:
           = r.client_port
         %td
-          = int_to_ip r.destination_ip
+          = r.destination_ip
           %br
           \:
           = r.destination_port
         %td
           = r.domain
         %td
-          = link_to r.url, 'http://' +r.domain + r.url, target: :_blank
+          - domain = r.domain.nil? ? '' : r.domain + r.url
+          = link_to r.url, 'http://' + domain, target: :_blank
         %td
           = r.bytes_received
         %td

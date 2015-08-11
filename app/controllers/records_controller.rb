@@ -4,8 +4,8 @@ class RecordsController < ApplicationController
   # end
 
   def import
-    Record.import
-    redirect_to records_path
+    Record.direct_import
+    redirect_to root_path
   end
 
   def search
