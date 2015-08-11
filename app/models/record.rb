@@ -1,6 +1,9 @@
 require 'csv'
 require 'ipaddr'
 require 'benchmark'
+require 'parallel'
+require 'smarter_csv'
+
 
 class Record < ActiveRecord::Base
   def self.import(folder='HDR')
@@ -47,11 +50,9 @@ class Record < ActiveRecord::Base
   end
 
   def self.direct_import(folder='HDR')
-    thr = []
-    thr << Thread.new do
-      conn = ActiveRecord::Base.connection.raw_connection
-      time_to_transform = Benchmark.realtime do
-        # begin
+    conn = ActiveRecord::Base.connection.raw_connection
+    time_to_transform = Benchmark.realtime do
+      conn.transaction do
         conn.copy_data "COPY records FROM STDIN CSV" do
           Dir["#{folder}/*.csv"].each do |file|
             CSV.foreach(file, headers: true) do |row|
@@ -61,27 +62,29 @@ class Record < ActiveRecord::Base
           end
         end
       end
-      p time_to_transform
+    end
+    p time_to_transform
+  end
+
+  def self.parallel(folder='HDR')
+    time_to_transform = Benchmark.realtime do
+      Parallel.map(Dir["#{folder}/*.csv"], in_processes: 6) do |file|
+        hashes = CSV.read(file, headers: true)
+        worker(hashes)
       end
+    end
+    p time_to_transform
+  end
 
-    # thr << Thread.new do
-    #   conn = ActiveRecord::Base.connection.raw_connection
-    #   time_to_transform = Benchmark.realtime do
-    #     # begin
-    #     conn.copy_data "COPY records FROM STDIN CSV" do
-    #       Dir["#{folder}/*.csv"].each do |file|
-    #         CSV.foreach(file, headers: true) do |row|
-    #           row = row.to_h
-    #           conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
-    #         end
-    #       end
-    #     end
-    #   end
-    #   p time_to_transform
-    #   end
-
-    thr.first.join
-    # thr.last.join
+  def self.worker(hashes)
+    conn = PG.connect(dbname: 'beltelecom_development')
+    conn.transaction do
+      conn.exec("COPY records FROM STDIN CSV")
+      hashes.each do |row|
+        conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
+      end
+    end
+    conn.finish
   end
 
   def self.search(params)

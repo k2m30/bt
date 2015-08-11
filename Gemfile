@@ -36,6 +36,8 @@ gem 'bootstrap-sass', '~> 3.3.5'
 gem 'haml'
 gem 'haml-rails'
 gem 'will_paginate', '~> 3.0.6'
+gem 'smarter_csv'
+gem 'parallel'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

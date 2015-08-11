@@ -20,6 +20,6 @@ class CreateRecords < ActiveRecord::Migration
     end
     add_index :records, :client_ip
     add_index :records, :destination_ip
-    add_index :records, :domain
+    add_index :records, :domain, using: :gin
   end
 end
