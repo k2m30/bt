@@ -116,11 +116,11 @@ class Record < ActiveRecord::Base
     # records = records.where(domain: sym) if sym.present?
     records = records.where('domain like ?', "%#{sym}%") if sym.present?
 
-    sym = params[:session_start_from]
+    sym = params[:session_start]
     records = records.where('session_start >= ?', sym.to_datetime) if sym.present?
 
     sym = params[:session_end]
-    records = records.where('session_end <=', {session_end: sym}) if sym.present?
+    records = records.where('session_end <= ?', sym.to_datetime) if sym.present?
 
     sym = params[:bytes_sent_from]
     records = records.where('bytes_sent >= ?', sym) if sym.present?

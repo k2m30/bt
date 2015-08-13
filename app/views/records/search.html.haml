@@ -1,62 +1,49 @@
 =form_tag(search_path, class: 'form-inline', id: 'search_form', method: :get) do
 
   .form-group
-    -#=label_tag 'Client IP'
-    =text_field_tag :client_ip, params[:client_ip], class: 'form-control', placeholder: 'Client IP'
-  .form-group
-    -#=label_tag 'Port'
-    =text_field_tag :client_port, params[:client_port], class: 'form-control', placeholder: 'Port'
+    .col-sm-6
+      =text_field_tag :client_ip, params[:client_ip], class: 'form-control', placeholder: 'Client IP'
+    .col-sm-6
+      =text_field_tag :client_port, params[:client_port], class: 'form-control', placeholder: 'Port'
   %br
   .form-group
-    -#=label_tag 'Destination IP'
-    =text_field_tag :destination_ip, params[:destination_ip], class: 'form-control', placeholder: 'Destination IP'
-  .form-group
-    -#=label_tag 'Port'
-    =text_field_tag :destination_port, params[:destination_port], class: 'form-control', placeholder: 'Port'
+    .col-sm-6
+      =text_field_tag :destination_ip, params[:destination_ip], class: 'form-control', placeholder: 'Destination IP'
+    .col-sm-6
+      =text_field_tag :destination_port, params[:destination_port], class: 'form-control', placeholder: 'Port'
   %br
   .form-group
-    -#=label_tag 'Domain'
-    =text_field_tag :domain, params[:domain], class: 'form-control', placeholder: 'Domain'
-  .form-group
-    -#=label_tag 'URI'
-    =text_field_tag :url, params[:url], class: 'form-control', placeholder: 'URI'
+    .col-sm-6
+      =text_field_tag :domain, params[:domain], class: 'form-control', placeholder: 'Domain'
+    .col-sm-6
+      =text_field_tag :url, params[:url], class: 'form-control', placeholder: 'URI'
 
   %br
   .form-group
-    -#=label_tag 'Bytes received'
-    -#=label_tag 'from'
-    =text_field_tag :bytes_received_from, params[:bytes_received_from], class: 'form-control', placeholder: 'Bytes received from'
-    -#=label_tag 'to'
-    =text_field_tag :bytes_received_to, params[:bytes_received_to], class: 'form-control', placeholder: 'Bytes received to'
+    .col-sm-6
+      =text_field_tag :bytes_received_from, params[:bytes_received_from], class: 'form-control', placeholder: 'Bytes received from'
+    .col-sm-6
+      =text_field_tag :bytes_received_to, params[:bytes_received_to], class: 'form-control', placeholder: 'Bytes received to'
 
   %br
   .form-group
-    -#=label_tag 'Bytes sent'
-    -#=label_tag 'from'
-    =text_field_tag :bytes_sent_from, params[:bytes_sent_from], class: 'form-control', placeholder: 'Bytes sent from'
-    -#=label_tag 'to'
-    =text_field_tag :bytes_sent_to, params[:bytes_sent_to], class: 'form-control', placeholder: 'Bytes sent to'
+    .col-sm-6
+      =text_field_tag :bytes_sent_from, params[:bytes_sent_from], class: 'form-control', placeholder: 'Bytes sent from'
+    .col-sm-6
+      =text_field_tag :bytes_sent_to, params[:bytes_sent_to], class: 'form-control', placeholder: 'Bytes sent to'
 
   %br
   .form-group
-    -#=label_tag 'Session start'
-    -#=label_tag 'from'
-    =datetime_field_tag :session_start_from, params[:session_start_from], class: 'form-control', placeholder: 'Session start from'
-    -#=label_tag 'to'
-    =datetime_field_tag :session_start_to, params[:session_start_to], class: 'form-control', placeholder: 'Session start to'
+    .col-sm-6
+      =datetime_field_tag :session_start, params[:session_start], class: 'form-control', placeholder: 'Session start', id: 'session_start'
+    .col-sm-6
+      =datetime_field_tag :session_end, params[:session_end], class: 'form-control', placeholder: 'Session end', id: 'session_end'
 
-  %br
-  .form-group
-    -#=label_tag 'Session end'
-    -#=label_tag 'from'
-    =datetime_field_tag :session_end_from, params[:session_end_from], class: 'form-control', placeholder: 'Session end from'
-    -#=label_tag 'to'
-    =datetime_field_tag :session_end_to, params[:session_end_to], class: 'form-control', placeholder: 'Session end to'
   = link_to 'Hide form', '#', id: 'hide'
   %hr
   =submit_tag 'Search', class: 'btn btn-default'
 
-= link_to 'Show form', '#', id: 'show', hidden: true
+= link_to 'Show search form', '#', id: 'show', hidden: true
 
 %br
 =render 'list'
