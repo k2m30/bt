@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20150807122725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "records", id: false, force: :cascade do |t|
+  create_table "records", force: :cascade do |t|
     t.inet     "client_ip"
     t.integer  "client_port"
     t.inet     "destination_ip"

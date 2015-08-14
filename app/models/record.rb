@@ -53,7 +53,7 @@ class Record < ActiveRecord::Base
     conn = ActiveRecord::Base.connection.raw_connection
     time_to_transform = Benchmark.realtime do
       conn.transaction do
-        conn.copy_data "COPY records FROM STDIN CSV" do
+        conn.copy_data "COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, url, domain) FROM STDIN CSV" do
           Dir["#{folder}/*.csv"].each do |file|
             CSV.foreach(file, headers: true) do |row|
               row = row.to_h
@@ -81,7 +81,7 @@ class Record < ActiveRecord::Base
   def self.worker(hashes)
     conn = PG.connect(dbname: 'beltelecom_development')
     conn.transaction do
-      conn.async_exec("COPY records FROM STDIN CSV")
+      conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, url, domain) FROM STDIN CSV")
       hashes.each do |row|
         conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
       end

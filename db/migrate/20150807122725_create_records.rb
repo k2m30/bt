@@ -1,6 +1,6 @@
 class CreateRecords < ActiveRecord::Migration
   def change
-    create_table :records, id: false do |t|
+    create_table :records do |t|
 
       t.column :client_ip, :inet
       t.integer :client_port
