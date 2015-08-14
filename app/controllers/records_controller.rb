@@ -3,13 +3,11 @@ class RecordsController < ApplicationController
   #   @records = Record.paginate(:page => params[:page], :per_page => 50)
   # end
 
-  def import
-    Record.direct_import
-    redirect_to root_path
-  end
-
   def search
     @records = Record.search(params).paginate(:page => params[:page], :per_page => 50)
+  end
+
+  def examples
   end
 
   private

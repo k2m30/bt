@@ -1,0 +1,4 @@
+import_folder : 'HDR'
+delete : false
+move_to_folder : 'tmp/HDR'
+processes : 6

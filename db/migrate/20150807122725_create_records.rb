@@ -21,5 +21,6 @@ class CreateRecords < ActiveRecord::Migration
     add_index :records, :client_ip
     add_index :records, :destination_ip
     add_index :records, :domain
+    add_index :records, :url
   end
 end

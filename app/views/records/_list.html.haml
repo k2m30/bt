@@ -31,8 +31,9 @@
         %td
           = r.domain
         %td
-          - domain = r.domain.nil? ? '' : r.domain + r.url
-          = link_to r.url, 'http://' + domain, target: :_blank
+          - url = r.domain.nil? ? '' : r.domain + r.url
+          - url = r.url unless r.destination_port == 80
+          = link_to r.url, 'http://' + url, target: :_blank
         %td
           = r.bytes_received
         %td

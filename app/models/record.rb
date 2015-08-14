@@ -66,12 +66,20 @@ class Record < ActiveRecord::Base
     p time_to_transform
   end
 
-  def self.parallel(folder='HDR')
+  def self.parallel
+    properties = YAML.load(File.open('config/properties.yml'))
+    folder = properties['import_folder']
+    processes = properties['processes']
+
     time_to_transform = Benchmark.realtime do
-      Parallel.map(Dir["#{folder}/*.csv"], in_processes: 6) do |file|
+      Parallel.map(Dir["#{folder}/*.csv"], in_processes: processes) do |file|
         hashes = CSV.read(file, headers: true)
         worker(hashes)
-        # FileUtils.move "~/projects/beltelecom/#{file}", "~/projects/beltelecom/tmp/#{file}"
+        if properties['delete']
+          FileUtils.rm "#{file}"
+        else
+          FileUtils.move "#{file}", "#{properties['move_to_folder']}"
+        end
       end
     end
     p time_to_transform
@@ -106,9 +114,9 @@ class Record < ActiveRecord::Base
     sym = params[:destination_port]
     records = records.where(destination_port: sym) if sym.present?
 
-    sym = params[:domain]
+    sym = params[:dmn]
     # records = records.where(domain: sym) if sym.present?
-    records = records.where('domain like ?', "%#{sym}%") if sym.present?
+    records = records.where('domain similar to ?', sym) if sym.present?
 
     sym = params[:session_start]
     records = records.where('session_start >= ?', sym.to_datetime) if sym.present?
@@ -130,7 +138,7 @@ class Record < ActiveRecord::Base
 
     sym = params[:url]
     # records = records.where(url: sym) if sym.present?
-    records = records.where('url like ?', "%#{sym}%") if sym.present?
+    records = records.where('url similar to ?', sym) if sym.present?
 
     records
   end

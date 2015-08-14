@@ -14,9 +14,10 @@
   %br
   .form-group
     .col-sm-6
-      =text_field_tag :domain, params[:domain], class: 'form-control', placeholder: 'Domain'
+      =text_field_tag :dmn, params[:dmn], class: 'form-control', placeholder: 'Domain'
     .col-sm-6
       =text_field_tag :url, params[:url], class: 'form-control', placeholder: 'URI'
+  = link_to 'Regular expressions manual', examples_path, id: 'examples', target: '_blank'
 
   %br
   .form-group

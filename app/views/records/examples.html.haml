@@ -1,0 +1,121 @@
+#docContainerWrap
+  #docContainer
+    #docContent
+      .SECT1
+        .SECT2
+          %h4
+            You can use following literals to compose your regular expressions:
+          %ul
+            %li
+              %p
+                %tt.LITERAL
+                  _
+                denotes any single character like
+                %tt.LITERAL .
+                in POSIX regular expressions).
+            %li
+              %p
+                %tt.LITERAL
+                  \%
+                denotes any string like
+                %tt.LITERAL .*
+                in POSIX regular expressions).
+
+            %li
+              %p
+                %tt.LITERAL
+                  \|
+                denotes alternation (either
+                of two alternatives).
+            %li
+              %p
+                %tt.LITERAL *
+                denotes repetition of the
+                previous item zero or more times.
+            %li
+              %p
+                %tt.LITERAL +
+                denotes repetition of the
+                previous item one or more times.
+            %li
+              %p
+                %tt.LITERAL ?
+                denotes repetition of the
+                previous item zero or one time.
+            %li
+              %p
+                %tt.LITERAL {
+                %tt.REPLACEABLE.c2 m
+                %tt.LITERAL }
+                denotes
+                repetition of the previous item exactly
+                %tt.REPLACEABLE.c2 m
+                times.
+            %li
+              %p
+                %tt.LITERAL {
+                %tt.REPLACEABLE.c2 m
+                %tt.LITERAL ,}
+                denotes
+                repetition of the previous item
+                %tt.REPLACEABLE.c2 m
+                or more times.
+            %li
+              %p
+                %tt.LITERAL {
+                %tt.REPLACEABLE.c2 m
+                %tt.LITERAL ,
+                %tt.REPLACEABLE.c2 n
+                %tt.LITERAL }
+                denotes
+                repetition of the previous item at least
+                %tt.REPLACEABLE.c2 m
+                and not more than
+                %tt.REPLACEABLE.c2 n
+                times.
+            %li
+              %p
+                %tt.LITERAL ^
+                can be used to exclude pattern from search
+                %tt [^t]
+            %li
+              %p
+                Parentheses
+                %tt.LITERAL ()
+                can be used to
+                group items into a single logical item.
+            %li
+              %p
+                A bracket expression
+                %tt.LITERAL [...]
+                specifies a character class, just as in POSIX regular
+                expressions.
+          %h4 Some examples:
+
+          %ul
+            %li
+              'abc' ~ 'abc' =
+              %i true
+            %li
+              'abcd' ~ 'abc' =
+              %i false
+            %li
+              'abc' ~ 'a' =
+              %i false
+            %li
+              'abc' ~ 'a%' =
+              %i true
+            %li
+              'abc' ~ 'ab_' =
+              %i true
+            %li
+              'abc' ~ '%(b|d)%' =
+              %i true
+            %li
+              'abc' ~ '(b|c)%' =
+              %i false
+            %li
+              'abc' ~ '[^b]bc%' =
+              %i true
+
+= link_to 'Search page', root_path
