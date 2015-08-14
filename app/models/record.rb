@@ -71,6 +71,7 @@ class Record < ActiveRecord::Base
       Parallel.map(Dir["#{folder}/*.csv"], in_processes: 6) do |file|
         hashes = CSV.read(file, headers: true)
         worker(hashes)
+        FileUtils.move "~/projects/beltelecom/#{file}", "~/projects/beltelecom/tmp/#{file}"
       end
     end
     p time_to_transform
@@ -87,14 +88,7 @@ class Record < ActiveRecord::Base
       end
       conn.put_copy_end
     end
-
     conn.finish
-
-    # while conn.get_result
-    #   if conn.get_result.error_message
-    #     p conn.get_result.error_message
-    #   end
-    # end
   end
 
   def self.search(params)

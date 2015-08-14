@@ -22,8 +22,8 @@ Dir.chdir APP_ROOT do
 
   puts "\n== Removing old logs and tempfiles =="
   system "rm -f log/*"
-  system "rm -rf tmp/cache"
+  system "rm -rf csv/cache"
 
   puts "\n== Restarting application server =="
-  system "touch tmp/restart.txt"
+  system "touch csv/restart.txt"
 end
