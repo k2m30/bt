@@ -75,10 +75,13 @@ class Record < ActiveRecord::Base
       Parallel.map(Dir["#{folder}/*.csv"], in_processes: processes) do |file|
         hashes = CSV.read(file, headers: true)
         worker(hashes)
-        if properties['delete']
-          FileUtils.rm "#{file}"
-        else
-          FileUtils.move "#{file}", "#{properties['move_to_folder']}"
+
+        unless properties['leave_as_is']
+          if properties['delete']
+            FileUtils.rm "#{file}"
+          else
+            FileUtils.move "#{file}", "#{properties['move_to_folder']}"
+          end
         end
       end
     end
@@ -103,13 +106,22 @@ class Record < ActiveRecord::Base
     records = Record.all
 
     sym = params[:client_ip]
-    records = Record.where(client_ip: sym) if sym.present?
+    if sym.present?
+      sym.gsub! ' ',''
+      ip = IPAddr.new sym
+      sym = '::ffff:'+sym if ip.ipv4?
+      records = Record.where(client_ip: sym)
+    end
 
     sym = params[:client_port]
     records = records.where(client_port: sym) if sym.present?
 
     sym = params[:destination_ip]
-    records = records.where(destination_ip: sym) if sym.present?
+    if sym.present?
+      ip = IPAddr.new sym
+      sym = '::ffff:'+sym if ip.ipv4?
+      records = records.where(destination_ip: sym)
+    end
 
     sym = params[:destination_port]
     records = records.where(destination_port: sym) if sym.present?
