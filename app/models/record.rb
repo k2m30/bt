@@ -88,6 +88,7 @@ class Record < ActiveRecord::Base
     p time_to_transform
     ActiveRecord::Base.connection.reconnect!
     p Record.count
+    p properties
   end
 
   def self.worker(hashes)
