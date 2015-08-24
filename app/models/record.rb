@@ -67,6 +67,7 @@ class Record < ActiveRecord::Base
   end
 
   def self.parallel
+    ActiveRecord::Base.connection.reconnect!
     properties = YAML.load(File.open('config/properties.yml'))
     folder = properties['import_folder']
     processes = properties['processes']
