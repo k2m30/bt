@@ -51,6 +51,9 @@ class Record < ActiveRecord::Base
 
   def self.direct_import(folder='HDR')
     conn = ActiveRecord::Base.connection.raw_connection
+    properties = YAML.load(File.open('config/properties.yml'))
+    folder = properties['import_folder']
+
     time_to_transform = Benchmark.realtime do
       conn.transaction do
         conn.copy_data "COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, url, domain) FROM STDIN CSV" do
@@ -93,7 +96,8 @@ class Record < ActiveRecord::Base
   end
 
   def self.worker(hashes)
-    conn = PG.connect(dbname: 'beltelecom_development')
+    config = Rails.configuration.database_configuration[Rails.env]
+    conn = PG.connect(dbname: config['database'], host: config['host'], port: config['port'])
     conn.transaction do
       conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, url, domain) FROM STDIN CSV")
       hashes.each do |row|
