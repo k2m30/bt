@@ -76,7 +76,7 @@ class Record < ActiveRecord::Base
     processes = properties['processes']
 
     time_to_transform = Benchmark.realtime do
-      Parallel.map(Dir["#{folder}/*.csv"], in_processes: processes) do |file|
+      Parallel.map(Dir["#{folder}/*.csv"][0..5], in_processes: processes) do |file|
         hashes = CSV.read(file, headers: true)
         worker(hashes)
 
