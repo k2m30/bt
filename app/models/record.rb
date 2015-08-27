@@ -76,7 +76,11 @@ class Record < ActiveRecord::Base
     processes = properties['processes']
 
     time_to_transform = Benchmark.realtime do
-      Parallel.map(Dir["#{folder}/*.csv"][0..5], in_processes: processes) do |file|
+      i = 0
+      total = Dir["#{folder}/*.csv"].size
+      Parallel.map(Dir["#{folder}/*.csv"], in_processes: processes) do |file|
+        p "#{i} of #{total}"
+        i+=1
         hashes = CSV.read(file, headers: true)
         worker(hashes)
 
@@ -140,7 +144,7 @@ class Record < ActiveRecord::Base
     records = records.where('session_start >= ?', sym.to_datetime) if sym.present?
 
     sym = params[:session_end]
-    records = records.where('session_end <= ?', sym.to_datetime) if sym.present?
+    records = records.where('session_start <= ?', sym.to_datetime) if sym.present?
 
     sym = params[:bytes_sent_from]
     records = records.where('bytes_sent >= ?', sym) if sym.present?
