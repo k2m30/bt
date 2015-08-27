@@ -15,7 +15,7 @@ class RecordsController < ApplicationController
       end
       format.csv do
         @records = Record.search(params).limit(1000)
-        render json: @records.to_csv
+        render text: @records.to_csv
       end
     end
 

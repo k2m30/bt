@@ -44,9 +44,10 @@
   %hr
   =submit_tag 'Search', class: 'btn btn-default'
 
+  =link_to 'Export', search_path(format: 'csv', params: params), class: 'btn btn-default'
+
 = link_to 'Show search form', '#', id: 'show', hidden: true
 
 %br
-=link_to 'Export', search_path(format: 'csv', params: params)
 
 =render 'list'
