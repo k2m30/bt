@@ -49,9 +49,9 @@ class Record < ActiveRecord::Base
     p [t_csv, t_save]
   end
 
-  def self.direct_import(folder='HDR')
+  def self.direct_import(properties_file = 'config/properties.yml' )
     conn = ActiveRecord::Base.connection.raw_connection
-    properties = Rails.env.bt? ? YAML.load(File.open('config/bt.yml')) : YAML.load(File.open('config/properties.yml'))
+    properties = YAML.load(File.open(properties_file))
     folder = properties['import_folder']
 
     time_to_transform = Benchmark.realtime do
@@ -69,9 +69,9 @@ class Record < ActiveRecord::Base
     p time_to_transform
   end
 
-  def self.parallel
+  def self.parallel(properties_file = 'config/properties.yml' )
     ActiveRecord::Base.connection.reconnect!
-    properties = YAML.load(File.open('config/properties.yml'))
+    properties = YAML.load(File.open(properties_file))
     folder = properties['import_folder']
     processes = properties['processes']
 
