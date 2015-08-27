@@ -1,0 +1,48 @@
+=form_tag(search_path, class: 'form-inline', id: 'search_form', method: :get) do
+
+  .form-group
+    .col-sm-6
+      =text_field_tag :source_ip, params[:source_ip], class: 'form-control', placeholder: 'Source IP'
+    .col-sm-6
+      =text_field_tag :destination_ip, params[:destination_ip], class: 'form-control', placeholder: 'Destination IP'
+  %br
+  .form-group
+    -#.col-sm-4
+    -#  =text_field_tag :call_id, params[:call_id], class: 'form-control', placeholder: 'Call Identifier'
+    .col-sm-6
+      =text_field_tag :caller, params[:caller], class: 'form-control', placeholder: 'From'
+    .col-sm-6
+      =text_field_tag :callee, params[:callee], class: 'form-control', placeholder: 'To'
+
+
+  %br
+  .form-group
+    .col-sm-6
+      =text_field_tag :duration, params[:duration], class: 'form-control', placeholder: 'Duration'
+    .col-sm-6
+      =text_field_tag :status_at_end, params[:status_at_end], class: 'form-control', placeholder: 'Status'
+
+  %br
+  .form-group
+    .col-sm-6
+      =text_field_tag :response_code, params[:response_code], class: 'form-control', placeholder: 'Response code'
+    .col-sm-6
+      =text_field_tag :response_description, params[:response_description], class: 'form-control', placeholder: 'Response Description'
+
+  %br
+  .form-group
+    .col-sm-6
+      =datetime_field_tag :start_time_from, params[:start_time_from], class: 'form-control', placeholder: 'Session start', id: 'session_start'
+    .col-sm-6
+      =datetime_field_tag :start_time_to, params[:start_time_to], class: 'form-control', placeholder: 'Session end', id: 'session_end'
+
+  = link_to 'Hide form', '#', id: 'hide'
+  %hr
+  =submit_tag 'Search', class: 'btn btn-default'
+
+  =link_to 'Export', sip_ip_search_path(format: 'csv', params: params), class: 'btn btn-default'
+
+= link_to 'Show search form', '#', id: 'show', hidden: true
+
+%br
+=render 'list'
