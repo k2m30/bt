@@ -49,7 +49,7 @@ class Record < ActiveRecord::Base
     p [t_csv, t_save]
   end
 
-  def self.direct_import(properties_file = 'config/properties.yml' )
+  def self.direct_import(properties_file = 'config/properties.yml')
     conn = ActiveRecord::Base.connection.raw_connection
     properties = YAML.load(File.open(properties_file))
     folder = properties['import_folder']
@@ -69,7 +69,7 @@ class Record < ActiveRecord::Base
     p time_to_transform
   end
 
-  def self.parallel(properties_file = 'config/properties.yml' )
+  def self.parallel(properties_file = 'config/properties.yml')
     ActiveRecord::Base.connection.reconnect!
     properties = YAML.load(File.open(properties_file))
     folder = properties['import_folder']
@@ -98,6 +98,16 @@ class Record < ActiveRecord::Base
     p properties
   end
 
+  def self.to_csv
+    CSV.generate do |csv|
+      csv << column_names
+      all.each do |record|
+        csv << record.attributes.values_at(*column_names)
+      end
+    end
+
+  end
+
   def self.worker(hashes)
     config = Rails.configuration.database_configuration[Rails.env]
     conn = PG.connect(dbname: config['database'], host: config['host'], port: config['port'])
@@ -116,7 +126,7 @@ class Record < ActiveRecord::Base
 
     sym = params[:client_ip]
     if sym.present?
-      sym.gsub! ' ',''
+      sym.gsub! ' ', ''
       ip = IPAddr.new sym
       sym = '::ffff:'+sym if ip.ipv4?
       records = Record.where(client_ip: sym)

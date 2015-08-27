@@ -47,4 +47,6 @@
 = link_to 'Show search form', '#', id: 'show', hidden: true
 
 %br
+=link_to 'Export', search_path(format: 'csv', params: params)
+
 =render 'list'

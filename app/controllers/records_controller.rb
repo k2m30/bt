@@ -4,7 +4,21 @@ class RecordsController < ApplicationController
   # end
 
   def search
-    @records = Record.search(params).paginate(:page => params[:page], :per_page => 50)
+
+    respond_to do |format|
+      format.html do
+        @records = Record.search(params).paginate(:page => params[:page], :per_page => 50)
+      end
+      format.json do
+        @records = Record.search(params)
+        render json: @records
+      end
+      format.csv do
+        @records = Record.search(params).limit(1000)
+        render json: @records.to_csv
+      end
+    end
+
   end
 
   def examples
