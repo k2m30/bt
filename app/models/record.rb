@@ -51,7 +51,7 @@ class Record < ActiveRecord::Base
 
   def self.direct_import(folder='HDR')
     conn = ActiveRecord::Base.connection.raw_connection
-    properties = YAML.load(File.open('config/properties.yml'))
+    properties = Rails.env.bt? ? YAML.load(File.open('config/bt.yml')) : YAML.load(File.open('config/properties.yml'))
     folder = properties['import_folder']
 
     time_to_transform = Benchmark.realtime do

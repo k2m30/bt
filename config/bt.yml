@@ -1,0 +1,5 @@
+import_folder : '/home/Alex/HDR'
+delete : false
+move_to_folder : 'tmp/HDR'
+processes : 6
+leave_as_is : true
