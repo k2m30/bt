@@ -15,12 +15,12 @@ class Call < ActiveRecord::Base
           c.start_time = row['Start Time']
           c.call_identifier = row['Call Identifier']
 
-          source_ip = IPAddr.new(row['Source Ip'].gsub(' ',''))
+          source_ip = IPAddr.new(row['Source Ip'].gsub(/[^\d+\.]/, ''))
           ip = Ip.find_by(ip: source_ip, source: true) || Ip.create(ip: source_ip, source: true)
           c.ips << ip
           c.caller = row['Caller']
 
-          destination_ip = IPAddr.new(row['Destination Ip'].gsub(' ',''))
+          destination_ip = IPAddr.new(row['Destination Ip'].gsub(/[^\dx+\.]/, ''))
           ip = Ip.find_by(ip: destination_ip, source: false) || Ip.create(ip: destination_ip, source: false)
           c.ips << ip
           c.callee = row['Callee']
