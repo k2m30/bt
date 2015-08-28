@@ -17,7 +17,6 @@ ActiveRecord::Schema.define(version: 20150827213159) do
   enable_extension "plpgsql"
 
   create_table "calls", force: :cascade do |t|
-    t.integer  "sip_ip_id"
     t.datetime "start_time"
     t.string   "call_identifier"
     t.string   "caller"
@@ -32,8 +31,22 @@ ActiveRecord::Schema.define(version: 20150827213159) do
     t.string   "call_type"
   end
 
-  add_index "calls", ["sip_ip_id"], name: "index_calls_on_sip_ip_id", using: :btree
   add_index "calls", ["start_time"], name: "index_calls_on_start_time", using: :btree
+
+  create_table "calls_ips", id: false, force: :cascade do |t|
+    t.integer "ip_id"
+    t.integer "call_id"
+  end
+
+  add_index "calls_ips", ["call_id"], name: "index_calls_ips_on_call_id", using: :btree
+  add_index "calls_ips", ["ip_id"], name: "index_calls_ips_on_ip_id", using: :btree
+
+  create_table "ips", force: :cascade do |t|
+    t.inet    "ip"
+    t.boolean "source"
+  end
+
+  add_index "ips", ["ip"], name: "index_ips_on_ip", using: :btree
 
   create_table "records", force: :cascade do |t|
     t.inet     "client_ip"
@@ -52,10 +65,5 @@ ActiveRecord::Schema.define(version: 20150827213159) do
   add_index "records", ["destination_ip"], name: "index_records_on_destination_ip", using: :btree
   add_index "records", ["domain"], name: "index_records_on_domain", using: :btree
   add_index "records", ["url"], name: "index_records_on_url", using: :btree
-
-  create_table "sip_ips", force: :cascade do |t|
-    t.inet    "ip"
-    t.boolean "source"
-  end
 
 end

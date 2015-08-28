@@ -1,4 +1,4 @@
-=form_tag(search_path, class: 'form-inline', id: 'search_form', method: :get) do
+=form_tag(sip_ip_search_path, class: 'form-inline', id: 'search_form', method: :get) do
 
   .form-group
     .col-sm-6
@@ -14,21 +14,6 @@
     .col-sm-6
       =text_field_tag :callee, params[:callee], class: 'form-control', placeholder: 'To'
 
-
-  %br
-  .form-group
-    .col-sm-6
-      =text_field_tag :duration, params[:duration], class: 'form-control', placeholder: 'Duration'
-    .col-sm-6
-      =text_field_tag :status_at_end, params[:status_at_end], class: 'form-control', placeholder: 'Status'
-
-  %br
-  .form-group
-    .col-sm-6
-      =text_field_tag :response_code, params[:response_code], class: 'form-control', placeholder: 'Response code'
-    .col-sm-6
-      =text_field_tag :response_description, params[:response_description], class: 'form-control', placeholder: 'Response Description'
-
   %br
   .form-group
     .col-sm-6
@@ -40,7 +25,9 @@
   %hr
   =submit_tag 'Search', class: 'btn btn-default'
 
-  =link_to 'Export', sip_ip_search_path(format: 'csv', params: params), class: 'btn btn-default'
+  -#=link_to 'Export', sip_ip_search_path(format: 'csv', params: params), class: 'btn btn-default'
+
+  =link_to 'Top callers', top_source_path, class: 'btn btn-default'
 
 = link_to 'Show search form', '#', id: 'show', hidden: true
 

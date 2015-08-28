@@ -1,8 +1,9 @@
--#=will_paginate @calls
+=will_paginate @calls
 
 %table.table.table-bordered.table-striped
   %thead
     %tr
+      %th Session start
       %th Source IP
       %th Destination IP
       %th From
@@ -11,26 +12,30 @@
       %th Status
       %th Response code
       %th Response Description
-      %th Session start
+
 
   %tbody
     - @calls.each do |call|
       %tr
         %td
-          = call.source_ip
+          = call.start_time.to_formatted_s(:short)
         %td
-          = call.destination_ip
+          = call.ips.find_by(source: true).ip
+        %td
+          = call.ips.find_by(source: false).ip
         %td
           = call.caller
         %td
           = call.callee
         %td
+          = call.duration
+        %td
+          = call.status_at_end
+        %td
           = call.response_code
         %td
           = call.response_description
-        %td
-          = call.start_time.to_formatted_s(:short)
 %br
 
--#=will_paginate @calls
+=will_paginate @calls
 

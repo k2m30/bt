@@ -6,7 +6,9 @@ require 'smarter_csv'
 
 
 class Record < ActiveRecord::Base
-  def self.import(folder='HDR')
+  def self.import(properties_file='config/properties.yml')
+    properties = YAML.load(File.open(properties_file))
+    folder = properties['import_folder']
     t = Time.now
     p t
     t_csv = 0

@@ -1,0 +1,5 @@
+import_folder : 'SIP'
+delete : false
+move_to_folder : 'tmp/HDR'
+processes : 6
+leave_as_is : true

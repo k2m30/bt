@@ -1,0 +1,9 @@
+%table.table.table-bordered.table-striped
+  %th IP
+  %th Calls
+  - @ips.each do |address|
+    %tr
+      %td.col-sm-4
+        = link_to address.ip, sip_ip_search_path(source_ip: address.ip)
+      %td.col-sm-2
+        = address.calls.count

@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   get 'search', to: 'records#search'
   # post 'search', to: 'records#search'
   get 'sip', to: 'sip_ip#search'
+  get 'top_source', to: 'sip_ip#top_source'
 end

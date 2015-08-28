@@ -1,5 +1,5 @@
-class SipIp < ActiveRecord::Base
-  has_many :calls
+class Ip < ActiveRecord::Base
+  has_and_belongs_to_many :calls, counter_cache: true
 
   def self.import(properties_file = 'config/sip.yml')
     conn = ActiveRecord::Base.connection.raw_connection
