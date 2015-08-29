@@ -81,6 +81,7 @@ class Record < ActiveRecord::Base
     if files.empty?
       p 'Preparing files..'
       `gzip -d #{folder}/*.gz`
+      files = Dir["#{folder}/*.csv"]
     end
 
     time_to_transform = Benchmark.realtime do
@@ -145,7 +146,7 @@ class Record < ActiveRecord::Base
   end
 
   def self.search(params)
-    records = Record.all
+    records = Record.all.order(:session_start)
 
     sym = params[:client_ip]
     if sym.present?
