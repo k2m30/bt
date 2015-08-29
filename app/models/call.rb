@@ -4,8 +4,10 @@ class Call < ActiveRecord::Base
   def self.import(properties_file='config/calls.yml')
     properties = YAML.load(File.open(properties_file))
     folder = properties['import_folder']
+    files = Dir["#{folder}/**/*.csv"]
+
     time_to_transform = Benchmark.realtime do
-      Dir["#{folder}/**/*.csv"].each do |file|
+      files.each do |file|
         csv = []
         p file
         CSV.foreach(file, headers: true, col_sep: ',', quote_char: "\x00") do |row|
@@ -37,12 +39,27 @@ class Call < ActiveRecord::Base
             csv << c
           rescue
           end
-
         end
         csv.each(&:save)
+        unless properties['leave_as_is']
+          if properties['delete']
+            FileUtils.rm "#{file}"
+          else
+            FileUtils.move "#{file}", "#{properties['move_to_folder']}"
+          end
+        end
       end
     end
     p time_to_transform
+  end
+
+  def self.to_csv
+    CSV.generate do |csv|
+      csv << column_names + ',source_ip,destination_ip'
+      all.each do |call|
+        csv << call.attributes.values_at(*column_names) + ',' + call.ips.find_by(source: true).ip + ',' + call.ips.find_by(source: false).ip
+      end
+    end
   end
 
   def self.search(params)

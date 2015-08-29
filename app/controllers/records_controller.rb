@@ -4,7 +4,6 @@ class RecordsController < ApplicationController
   # end
 
   def search
-
     respond_to do |format|
       format.html do
         @records = Record.search(params).paginate(:page => params[:page], :per_page => 50)
@@ -18,7 +17,6 @@ class RecordsController < ApplicationController
         render text: @records.to_csv
       end
     end
-
   end
 
   def examples

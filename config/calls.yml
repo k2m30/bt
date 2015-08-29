@@ -1,5 +1,5 @@
-import_folder : 'SIP'
+import_folder : 'SIP/cdrs'
 delete : false
-move_to_folder : 'tmp/HDR'
+move_to_folder : 'SIP/processed'
 processes : 6
-leave_as_is : true
+leave_as_is : false

@@ -112,7 +112,6 @@ class Record < ActiveRecord::Base
         csv << record.attributes.values_at(*column_names)
       end
     end
-
   end
 
   # def self.worker(file)
@@ -146,7 +145,7 @@ class Record < ActiveRecord::Base
   end
 
   def self.search(params)
-    records = Record.all.order(:session_start)
+    records = Record.all.order(session_start: :desc)
 
     sym = params[:client_ip]
     if sym.present?
