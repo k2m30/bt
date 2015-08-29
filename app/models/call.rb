@@ -55,9 +55,11 @@ class Call < ActiveRecord::Base
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << column_names + ',source_ip,destination_ip'
+      headers = column_names << 'source_ip' << 'destination_ip'
+      csv << headers
       all.each do |call|
-        csv << call.attributes.values_at(*column_names) + ',' + call.ips.find_by(source: true).ip + ',' + call.ips.find_by(source: false).ip
+        row = call.attributes.values_at(*column_names) << call.ips.find_by(source: true).ip.to_s << call.ips.find_by(source: false).ip.to_s
+        csv << row
       end
     end
   end
