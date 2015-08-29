@@ -77,13 +77,17 @@ class Record < ActiveRecord::Base
     folder = properties['import_folder']
     processes = properties['processes']
 
+    files = Dir["#{folder}/*.csv"]
+    if files.empty?
+      p 'Preparing files..'
+      `gzip -d #{folder}/*.gz`
+    end
+
     time_to_transform = Benchmark.realtime do
-      files = Dir["#{folder}/*.csv"]
       total = files.size
       Parallel.map(files, in_processes: processes) do |file|
-        p "#{files.index(file)} of #{total}"
-        hashes = CSV.read(file, headers: true)
-        worker(hashes)
+        p "#{files.index(file)+1} of #{total}"
+        worker(file)
 
         unless properties['leave_as_is']
           if properties['delete']
@@ -110,13 +114,30 @@ class Record < ActiveRecord::Base
 
   end
 
-  def self.worker(hashes)
+  # def self.worker(file)
+  #   config = Rails.configuration.database_configuration[Rails.env]
+  #   conn = PG.connect(dbname: config['database'], host: config['host'], port: config['port'])
+  #   conn.transaction do
+  #     conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, domain, subscriber_id) FROM STDIN CSV")
+  #     p file
+  #     File.read(file).lines[1..-1].each do |row|
+  #       row = row.split(',')
+  #       row = row[4]+row[5]
+  #       # conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},#{row['SubscriberID']},#{row['RequestHeader.Host']}\n"
+  #     end
+  #     conn.put_copy_end
+  #   end
+  #   conn.finish
+  # end
+  def self.worker(file)
     config = Rails.configuration.database_configuration[Rails.env]
     conn = PG.connect(dbname: config['database'], host: config['host'], port: config['port'])
     conn.transaction do
-      conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, url, domain) FROM STDIN CSV")
-      hashes.each do |row|
-        conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},\"#{row['URI'].nil? ? '' : URI.escape(row['URI'])}\",#{row['RequestHeader.Host']}\n"
+      conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, subscriber_id, domain) FROM STDIN CSV")
+      CSV.foreach(file, headers: true) do |row|
+        if row['HTTPMethod']=='GET' && %w[HTTP HTTP_Browsing Mobile_HTTP_Browsing].include?(row['ServiceID'])
+          conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},#{row['SubscriberID']},#{row['RequestHeader.Host']}\n"
+        end
       end
       conn.put_copy_end
     end

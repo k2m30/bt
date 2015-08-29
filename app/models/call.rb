@@ -9,31 +9,35 @@ class Call < ActiveRecord::Base
         csv = []
         p file
         CSV.foreach(file, headers: true, col_sep: ',', quote_char: "\x00") do |row|
-          row = row.to_h
-          #Start Time,Call Identifier,Source Ip,Caller,Destination Ip,Callee,Call duration,Call Start time,Status at end,Response Code,Response Description,Proto,Request to,Call Type
-          c = Call.new
-          c.start_time = row['Start Time']
-          c.call_identifier = row['Call Identifier']
+          begin
+            row = row.to_h
+            #Start Time,Call Identifier,Source Ip,Caller,Destination Ip,Callee,Call duration,Call Start time,Status at end,Response Code,Response Description,Proto,Request to,Call Type
+            c = Call.new
+            c.start_time = row['Start Time']
+            c.call_identifier = row['Call Identifier']
 
-          source_ip = IPAddr.new(row['Source Ip'].gsub(/[^\d+\.]/, ''))
-          ip = Ip.find_by(ip: source_ip, source: true) || Ip.create(ip: source_ip, source: true)
-          c.ips << ip
-          c.caller = row['Caller']
+            source_ip = IPAddr.new(row['Source Ip'].gsub(/[^\d+\.]/, ''))
+            ip = Ip.find_by(ip: source_ip, source: true) || Ip.create(ip: source_ip, source: true)
+            c.ips << ip
+            c.caller = row['Caller']
 
-          destination_ip = IPAddr.new(row['Destination Ip'].gsub(/[^\dx+\.]/, ''))
-          ip = Ip.find_by(ip: destination_ip, source: false) || Ip.create(ip: destination_ip, source: false)
-          c.ips << ip
-          c.callee = row['Callee']
+            destination_ip = IPAddr.new(row['Destination Ip'].gsub(/[^\d+\.]/, ''))
+            ip = Ip.find_by(ip: destination_ip, source: false) || Ip.create(ip: destination_ip, source: false)
+            c.ips << ip
+            c.callee = row['Callee']
 
-          c.duration = row['Call duration']
-          c.status_at_end = row['Status at end']
-          c.response_code = row['Response Code']
-          c.response_description = row['Response Description']
-          c.proto = row['Proto']
-          c.request_to = row['Request to']
-          c.call_type = row['Call Type']
-          # r.save
-          csv << c
+            c.duration = row['Call duration']
+            c.status_at_end = row['Status at end']
+            c.response_code = row['Response Code']
+            c.response_description = row['Response Description']
+            c.proto = row['Proto']
+            c.request_to = row['Request to']
+            c.call_type = row['Call Type']
+            # r.save
+            csv << c
+          rescue
+          end
+
         end
         csv.each(&:save)
       end

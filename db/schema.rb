@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150827213159) do
+ActiveRecord::Schema.define(version: 20150829090401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,13 +57,12 @@ ActiveRecord::Schema.define(version: 20150827213159) do
     t.datetime "session_end"
     t.integer  "bytes_sent"
     t.integer  "bytes_received"
-    t.string   "url"
     t.string   "domain"
+    t.string   "subscriber_id"
   end
 
   add_index "records", ["client_ip"], name: "index_records_on_client_ip", using: :btree
   add_index "records", ["destination_ip"], name: "index_records_on_destination_ip", using: :btree
   add_index "records", ["domain"], name: "index_records_on_domain", using: :btree
-  add_index "records", ["url"], name: "index_records_on_url", using: :btree
 
 end

@@ -6,7 +6,7 @@
       %th Client IP:Port
       %th Destination IP:Port
       %th Domain
-      %th URI
+      %th Subscriber ID
       %th Downloaded
       %th Uploaded
       %th Session start
@@ -16,7 +16,7 @@
     - @records.each do |r|
       %tr
         %td
-          = r.client_ip
+          = r.client_ip.native
           -#(
           -#= r.client_ip
           -#)
@@ -24,16 +24,17 @@
           \:
           = r.client_port
         %td
-          = r.destination_ip
+          = r.destination_ip.native
           %br
           \:
           = r.destination_port
         %td
           = r.domain
         %td
-          - url = r.domain.nil? ? '' : r.domain + r.url
-          - url = r.url unless r.destination_port == 80
-          = link_to r.url, 'http://' + url, target: :_blank
+          = r.subscriber_id
+          -#- url = r.domain.nil? ? '' : r.domain + r.url
+          -#- url = r.url unless r.destination_port == 80
+          -#= link_to r.url, 'http://' + url, target: :_blank
         %td
           = r.bytes_received
         %td
