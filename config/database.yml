@@ -58,7 +58,7 @@ development:
 bt:
   <<: *default
   database: beltelecom_development
-  username: beltelecom
+  username: deployer
   host: 192.168.37.201
   port: 5432
 

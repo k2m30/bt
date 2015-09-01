@@ -194,7 +194,11 @@ class Record < ActiveRecord::Base
     # records = records.where(url: sym) if sym.present?
     records = records.where('url similar to ?', sym) if sym.present?
 
-    records
+    records.limit(1000)
+  end
+
+  def self.size
+    last.id
   end
 
 end
