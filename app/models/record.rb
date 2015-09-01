@@ -145,7 +145,8 @@ class Record < ActiveRecord::Base
   end
 
   def self.search(params)
-    records = Record.all.order(session_start: :desc)
+    n = params[:n] || 10000
+    records = Record.limit(n)
 
     sym = params[:client_ip]
     if sym.present?
@@ -169,8 +170,8 @@ class Record < ActiveRecord::Base
     records = records.where(destination_port: sym) if sym.present?
 
     sym = params[:dmn]
-    # records = records.where(domain: sym) if sym.present?
-    records = records.where('domain similar to ?', sym) if sym.present?
+    records = records.where(domain: sym) if sym.present?
+    # records = records.where('domain similar to ?', sym) if sym.present?
 
     sym = params[:session_start]
     records = records.where('session_start >= ?', sym.to_datetime) if sym.present?
@@ -194,7 +195,7 @@ class Record < ActiveRecord::Base
     # records = records.where(url: sym) if sym.present?
     records = records.where('url similar to ?', sym) if sym.present?
 
-    records.limit(1000)
+    records.limit(1000).order(session_start: :desc)
   end
 
   def self.size
