@@ -6,7 +6,7 @@ class RecordsController < ApplicationController
   def search
     respond_to do |format|
       format.html do
-        @records = Record.search(params).limit(1000).paginate(:page => params[:page], :per_page => 50)
+        @records = Record.search(params)#.limit(1000).paginate(:page => params[:page], :per_page => 50)
       end
       format.json do
         @records = Record.search(params)
