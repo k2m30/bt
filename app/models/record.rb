@@ -203,4 +203,8 @@ class Record < ActiveRecord::Base
     last.id
   end
 
+  def self.count
+    last.id
+  end
+
 end
