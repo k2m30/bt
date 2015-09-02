@@ -147,7 +147,7 @@ class Record < ActiveRecord::Base
   def self.search(params)
     p params
     n = params[:n] || 1000
-    records = Record.limit(n) if params.
+    records = Record.limit(n) #if params.
 
     sym = params[:client_ip]
     if sym.present?
@@ -196,7 +196,7 @@ class Record < ActiveRecord::Base
     # records = records.where(url: sym) if sym.present?
     records = records.where('url similar to ?', sym) if sym.present?
 
-    records.limit(1000).order(session_start: :desc)
+    records.limit(1000)#.order(session_start: :desc)
   end
 
   def self.size
