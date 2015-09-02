@@ -196,7 +196,7 @@ class Record < ActiveRecord::Base
     # records = records.where(url: sym) if sym.present?
     records = records.where('url similar to ?', sym) if sym.present?
 
-    records.order(session_start: :desc)
+    records#.order(session_start: :desc)
   end
 
   def self.size
