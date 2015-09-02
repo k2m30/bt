@@ -146,7 +146,7 @@ class Record < ActiveRecord::Base
 
   def self.search(params)
     p params
-    n = params[:n] || 10000
+    n = params[:n] || 1000
     records = Record.limit(n) #if params.
 
     sym = params[:client_ip]
