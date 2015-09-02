@@ -145,6 +145,7 @@ class Record < ActiveRecord::Base
   end
 
   def self.search(params)
+    p params
     n = params[:n] || 1000
     records = Record.limit(n)
 
@@ -153,7 +154,7 @@ class Record < ActiveRecord::Base
       sym.gsub! ' ', ''
       ip = IPAddr.new sym
       sym = '::ffff:'+sym if ip.ipv4?
-      records = Record.where(client_ip: sym)
+      records = records.where(client_ip: sym)
     end
 
     sym = params[:client_port]
