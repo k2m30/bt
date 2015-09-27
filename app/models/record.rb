@@ -135,7 +135,8 @@ class Record < ActiveRecord::Base
     conn.transaction do
       conn.async_exec("COPY records (client_ip, client_port, destination_ip, destination_port, session_start, session_end, bytes_sent, bytes_received, subscriber_id, domain) FROM STDIN CSV")
       CSV.foreach(file, headers: true) do |row|
-        if row['HTTPMethod']=='GET' && %w[HTTP HTTP_Browsing Mobile_HTTP_Browsing].include?(row['ServiceID'])
+        content_type = row['ResponseHeader.Content-Type']
+        if row['HTTPMethod']=='GET' && %w[HTTP HTTP_Browsing Mobile_HTTP_Browsing].include?(row['ServiceID']) && (content_type.nil? || content_type.include?('text/html') || content_type.include?('text/plain'))
           conn.put_copy_data "#{row['ClientIP']},#{row['ClientPort']},#{row['ServerIP']},#{row['ServerPort']},#{row['StartTime']},#{(row['StartTime'].to_datetime+row['Duration'].to_i)},#{row['UploadContentLength']},#{row['DownloadContentLength']},#{row['SubscriberID']},#{row['RequestHeader.Host']}\n"
         end
       end
